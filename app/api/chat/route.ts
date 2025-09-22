@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
                   // 🔗 If user asks for links, format them in a conversational way
                   if (userWantsLink) {
                     const formattedSources = docsMap
-                    .map(d => `- <a href="${d.source}" target="_blank" rel="noopener noreferrer>${d.source}</a>`)
+                    .map(d => `- <a href="${d.source}" target="_blank" rel="noopener noreferrer">${d.source}</a>`)
                       .join("\n");
                   
                     contextPrompt += `

@@ -4,6 +4,7 @@ import { GoogleGenAI } from "@google/genai";
 import { PuppeteerWebBaseLoader } from "@langchain/community/document_loaders/web/puppeteer";
 import dotenv from "dotenv";
 
+
 type Doc = { $vector: number[]; text: string; source: string };
 
 dotenv.config();
@@ -16,7 +17,11 @@ const website_data = [
     'https://assentsteel.vercel.app/contact-us',
     'https://assentsteel.vercel.app/news',
     'https://assentsteel.vercel.app/projects-list',
-    'https://assentsteel.vercel.app/careers'
+    'https://assentsteel.vercel.app/careers',
+    'https://assentsteel.vercel.app/engineering',
+    'https://assentsteel.vercel.app/fabrication',
+    'https://assentsteel.vercel.app/blasting',
+    'https://assentsteel.vercel.app/services'
 ]
 
 const splitter = new RecursiveCharacterTextSplitter({
@@ -85,13 +90,25 @@ export function connectToDatabase(): Db {
 
     const ai = new GoogleGenAI({ apiKey: "AIzaSyBmjoigDQc4IPOYC1nX8sW2FDQhJB--0XI" });
 
-    const pages = await Promise.all(
-        website_data.map(url => scrapePage(url))
-    );
+    async function processWithLimit(urls: string[], limit: number, fn: (url: string) => Promise<string | null>) {
+        const results: { url: string; content: string | null }[] = [];
+        for (let i = 0; i < urls.length; i += limit) {
+            const batch = urls.slice(i, i + limit);
+            const res = await Promise.all(batch.map(async (url) => {
+                const content = await fn(url);
+                return { url, content };
+            }));
+            results.push(...res);
+        }
+        return results;
+    }
+
+    const pages = await processWithLimit(website_data, 2, scrapePage);
 
     for (let i = 0; i < pages.length; i++) {
-        const url = website_data[i];
-        const content = pages[i];
+        const { url, content } = pages[i];
+        if (!content) continue;
+
         const chunks = await splitter.splitText(content);
 
         // Create embeddings for all chunks in parallel
@@ -112,7 +129,7 @@ export function connectToDatabase(): Db {
                 return {
                     $vector: vector,
                     text: chunks[idx],
-                    source: url,
+                    source: url, // URL included here
                 };
             })
             .filter((doc): doc is Doc => doc !== null);
@@ -124,6 +141,7 @@ export function connectToDatabase(): Db {
         }
     }
 })();
+
 
 
 
