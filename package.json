@@ -17,6 +17,7 @@
     "@langchain/community": "^0.3.48",
     "@langchain/core": "^0.3.62",
     "@langchain/google-genai": "^0.2.14",
+    "@lottiefiles/dotlottie-react": "^0.17.1",
     "langchain": "^0.3.29",
     "next": "15.3.5",
     "p-limit": "^7.1.1",

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import { RiRobot3Fill } from "react-icons/ri";
 import { IoMdSend } from "react-icons/io";
-import Image from 'next/image';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 export default function Chatbot() {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>([{role: "assistant", content: "Hello! I'm here to help you. How can I assist you today?"}]);
@@ -52,11 +52,17 @@ export default function Chatbot() {
   return (
     <div className='w-full h-screen flex items-center justify-center'>
       <div className='text-2xl font-bold'>Dummy Website Based on Assent Steel</div>
-      <div className="fixed bottom-6 right-6 z-50">
-        <div className="bottom-6 right-6 absolute">
+      <div className="fixed bottom-6 right-3 z-50">
+        <div className="bottom-4 right-1 absolute">
           {!showChat && (
 
-            <Image src="/Chatbot.gif" alt="robot" width={100} height={100} className="cursor-pointer" onClick={() => setShowChat(true)} />
+<DotLottieReact
+src="https://lottie.host/c3c599e0-b015-407f-879a-d4e2ded62980/5EkkWeGtql.lottie"
+loop
+autoplay
+className='w-48 h-24'
+onClick={() => setShowChat(true)}
+/>
 
           )}
         </div>
