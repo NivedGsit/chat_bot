@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import { RiRobot3Fill } from "react-icons/ri";
 import { IoMdSend } from "react-icons/io";
-import Image from 'next/image';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 export default function Chatbot() {
