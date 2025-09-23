@@ -15,9 +15,9 @@ export async function GET() {
       message: "Pinged Astra DB successfully",
       doc,
     });
-  } catch (err: any) {
+  } catch (err) {
     return NextResponse.json(
-      { success: false, error: err.message },
+      { success: false, error: err },
       { status: 500 }
     );
   }
