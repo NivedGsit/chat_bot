@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { DataAPIClient } from "@datastax/astra-db-ts";
 
-const client = new DataAPIClient(process.env.ASTRA_DB_APPLICATION_TOKEN!);
-const database = client.db(process.env.ASTRA_DB_API_ENDPOINT!);
-const collection = database.collection(process.env.ASTRA_DB_COLLECTION!);
+const client = new DataAPIClient("AstraCS:NzpCukwgABCDHpMBMNhIvJHT:2c5bd4c44613d609068f2350aba4edfa463b2e70ea0bd64469e4d864b34c2048");
+const database = client.db("https://c44f0eb7-ac81-4c1e-86ac-3c390f8d27d0-us-east-2.apps.astra.datastax.com");
+const collection = database.collection("website_data");
 
 export async function GET() {
   try {
