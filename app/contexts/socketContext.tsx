@@ -18,7 +18,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // connect once globally
-    const s = io("http://localhost:8080", { query: { role: "admin" } });
+    const s = io(process.env.SOCKET_SERVER_URL, { query: { role: "admin" } });
     setSocket(s);
 
     // Listen for message events globally

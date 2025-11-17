@@ -67,7 +67,7 @@ export default function Chatbot() {
     // ⬅️ only connect if human mode ON
 
     if (!socketRef.current && userId) {
-      const socket = io("http://localhost:8080", {
+      const socket = io(process.env.SOCKET_SERVER_URL, {
         query: { role: "user", userId },
       })
       socketRef.current = socket
