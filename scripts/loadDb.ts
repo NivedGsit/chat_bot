@@ -67,7 +67,7 @@ export function connectToDatabase(): Db {
   console.log(`Created collection ${collection.keyspace}.${collection.name}`);
 
   const openai = new OpenAI({
-    apiKey: "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",
+    apiKey: process.env.OPEN_API_KEY,
   });
 
   async function processWithLimit(
