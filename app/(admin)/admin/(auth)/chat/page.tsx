@@ -57,7 +57,7 @@ const Page = () => {
 
   useEffect(() => {
     console.log("admin connected")
-    const s = io(process.env.SOCKET_SERVER_URL, { query: { role: "admin" } })
+    const s = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL, { query: { role: "admin" } })
     setSocket(s)
 
     s.on("all-chats", (allChats: Chat[]) => {

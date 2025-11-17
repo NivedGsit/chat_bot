@@ -66,8 +66,9 @@ export default function Chatbot() {
   useEffect(() => {
     // ⬅️ only connect if human mode ON
 
+
     if (!socketRef.current && userId) {
-      const socket = io(process.env.SOCKET_SERVER_URL, {
+      const socket = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL, {
         query: { role: "user", userId },
       })
       socketRef.current = socket
