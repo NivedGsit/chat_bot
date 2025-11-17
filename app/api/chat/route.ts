@@ -24,7 +24,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const latestMessage = body.messages[body.messages.length - 1];
 
-    console.log(latestMessage);
 
     // Initialize OpenAI
     const openai = new OpenAI({
