@@ -64,7 +64,7 @@ const Page = () => {
       console.log(allChats)
       setChats(allChats.map((chat: Chat) => ({
         ...chat,
-        unreadCount: chat.unreadCount || 0
+        unreadCount: chat.unreadCount || 1
       })));
       setLoading(false)
 
@@ -82,6 +82,7 @@ const Page = () => {
 
     // New user joins
     s.on("new-user-joined", (userId: string) => {
+      console.log("new user joined")
       setChats((prev) => [...prev, { userId, messages: [], details: { name: "", organization: "", location: "", email: "" }, unreadCount: 1 }])
     })
 
@@ -95,7 +96,7 @@ const Page = () => {
           // ✅ Update details for existing chat
           return prev.map((chat) =>
             chat.userId === userId
-              ? { ...chat, details: answers }
+              ? { ...chat, details: answers}
               : chat
           )
         } else {

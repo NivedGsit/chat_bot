@@ -27,6 +27,11 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       setTotalUnread((prev) => prev + 1); // increment global unread count
     });
 
+    s.on("user-details", () => {
+      console.log("New user joined");
+      setTotalUnread((prev) => prev + 1);
+    })
+
     return () => {
       s.disconnect();
     };
