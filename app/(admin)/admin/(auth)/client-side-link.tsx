@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { memo } from "react";
 import { MdExpandCircleDown } from "react-icons/md";
+import { useUnread } from "@/app/contexts/unreadContext";
 
 interface ClientSideLinkProps {
   href: string;
@@ -30,6 +31,8 @@ function ClientSideLink({
 }: ClientSideLinkProps) {
   const pathname = usePathname();
   const isActive = pathname === `${href}` || pathname?.startsWith(`${href}/`);
+
+  const { totalUnread } = useUnread();
 
   const handleLogout = async () => {
     try {
@@ -65,7 +68,10 @@ function ClientSideLink({
         )}
       >
         <div className="flex items-center">
-        <span className="mr-3">{icon}</span>
+        <span className="mr-3 relative">{icon}
+          {!isActive && name === "Chat" && totalUnread > 0 && <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-buffer rounded-full -top-2 -end-3">{totalUnread > 9 ? "9+" : totalUnread}</div>}
+        </span>
+        
         {name}
         </div>
         {hasChild && (!isOpen ? <MdExpandCircleDown className="ml-1 mt-1" /> : <MdExpandCircleDown className="ml-1 mt-1 rotate-180" />)}

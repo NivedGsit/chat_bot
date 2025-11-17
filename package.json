@@ -20,6 +20,7 @@
     "@langchain/core": "^0.3.62",
     "@langchain/google-genai": "^0.2.14",
     "@lottiefiles/dotlottie-react": "^0.17.1",
+    "@radix-ui/react-dialog": "^1.1.15",
     "@upstash/redis": "^1.35.4",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",

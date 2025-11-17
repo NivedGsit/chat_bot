@@ -5,7 +5,10 @@ import React, { useState } from 'react'
 import {
   ChatBubbleBottomCenterIcon,
   } from "@heroicons/react/24/outline";
-
+  import {
+    HomeIcon,
+    UserGroupIcon,
+  } from "@heroicons/react/24/outline";
 
 
 const AdminNavbar = () => {
@@ -13,6 +16,8 @@ const AdminNavbar = () => {
     const [openLink, setOpenLink] = useState<string | null>(null);
     
     const navItems = [
+      { name: "Home", href: "/admin/home", icon: HomeIcon },
+        { name: "About", href: "/admin/about", icon: UserGroupIcon },
         { name: "Chat", href: "/admin/chat", icon: ChatBubbleBottomCenterIcon },
       ];
 

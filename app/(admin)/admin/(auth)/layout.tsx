@@ -39,7 +39,7 @@ import "@/app/globals.css";
         </aside>
   
         {/* Main content */}
-        <main className="flex-1  h-screen overflow-y-auto p-8 bg-gray-100 text-black">{children}</main>
+        <main className="flex-1 h-screen overflow-y-auto bg-gray-100 text-black">{children}</main>
       </div>
     );
   }
