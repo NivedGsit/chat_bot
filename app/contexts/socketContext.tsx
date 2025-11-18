@@ -41,6 +41,11 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       notificationSound.current?.play().catch(() => { });
     })
 
+    s.on("reset-unread-count", (count: number) => {
+      console.log("reset unread count", count)
+      setTotalUnread((prev) => prev - count);
+    })
+
     return () => {
       s.disconnect();
     };

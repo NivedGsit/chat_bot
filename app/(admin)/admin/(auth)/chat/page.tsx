@@ -62,8 +62,8 @@ const Page = () => {
   }, []);
 
   useEffect(() => {
-  currentChatRef.current = currentChat;
-}, [currentChat]);
+    currentChatRef.current = currentChat;
+  }, [currentChat]);
 
 
 
@@ -77,7 +77,7 @@ const Page = () => {
       console.log(allChats)
       setChats(allChats.map((chat: Chat) => ({
         ...chat,
-        unreadCount: chat.unreadCount || 1
+        unreadCount: chat.messages.length == 0 ? 1 : chat.unreadCount || 0
       })));
       setLoading(false)
 
@@ -258,13 +258,27 @@ const Page = () => {
     } else {
       setCurrentChat(chat);
       socket?.emit("reset-unread", chat.userId);
+
+      // 1. Capture the unread count BEFORE updating the state
+      const unreadToRemove = chat.unreadCount;
+
+      socket?.emit("reset-unread-count",unreadToRemove)
+
+      // 2. Update chats
       setChats((prev) =>
         prev.map((c) =>
           c.userId === chat.userId ? { ...c, unreadCount: 0 } : c
         )
       );
-      setHideSend(false)
+
+      // 3. Update total unread SEPARATELY (safe)
+      if (unreadToRemove > 0) {
+        setTotalUnread((prev) => Math.max(prev - unreadToRemove, 0));
+      }
+
+      setHideSend(false);
     }
+
   }
 
   return (
