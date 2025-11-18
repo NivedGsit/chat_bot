@@ -55,6 +55,7 @@ const Page = () => {
   useEffect(() => {
     const total = chats.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
     setTotalUnread(total);
+    console.log("total",total)
   }, [chats]);
 
   useEffect(() => {
