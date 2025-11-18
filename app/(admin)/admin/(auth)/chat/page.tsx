@@ -262,7 +262,6 @@ const Page = () => {
       // 1. Capture the unread count BEFORE updating the state
       const unreadToRemove = chat.unreadCount;
 
-      socket?.emit("reset-unread-count",unreadToRemove)
 
       // 2. Update chats
       setChats((prev) =>
