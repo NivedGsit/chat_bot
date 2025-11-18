@@ -367,7 +367,7 @@ const Page = () => {
 
             {loading ? (
               <ChatLoader />
-            ) : chats.length === 0 ? (
+            ) : chats.filter((chat) => chat.details).length == 0 ? (
               <div className="flex flex-col justify-center items-center">
                 <DotLottieReact
                   src="https://lottie.host/f4ac59f3-6db9-45c8-bb25-3dfda46fd1ce/cMVVmbkdOv.lottie"
