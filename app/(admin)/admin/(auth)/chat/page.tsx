@@ -41,10 +41,13 @@ const Page = () => {
   const [socket, setSocket] = useState<Socket | null>(null)
   const [currentChat, setCurrentChat] = useState<Chat | null>(null)
   const [loading, setLoading] = useState(true)
-  const [oldChatsLoading,setOldChatsLoading] = useState(true)
+  const [oldChatsLoading, setOldChatsLoading] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [oldChats, setOldChats] = useState<Chat[]>([])
   const [hideSend, setHideSend] = useState(false)
+  const notificationSound = useRef<HTMLAudioElement | null>(null);
+  const currentChatRef = useRef<Chat | null>(null);
+
 
   const { setTotalUnread } = useUnread();
 
@@ -53,6 +56,16 @@ const Page = () => {
     const total = chats.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
     setTotalUnread(total);
   }, [chats]);
+
+  useEffect(() => {
+    notificationSound.current = new Audio("/notification.wav");
+  }, []);
+
+  useEffect(() => {
+  currentChatRef.current = currentChat;
+}, [currentChat]);
+
+
 
 
   useEffect(() => {
@@ -84,6 +97,7 @@ const Page = () => {
     s.on("new-user-joined", (userId: string) => {
       console.log("new user joined")
       setChats((prev) => [...prev, { userId, messages: [], details: { name: "", organization: "", location: "", email: "" }, unreadCount: 1 }])
+      notificationSound.current?.play().catch(() => { });
     })
 
     s.on("user-details", ({ userId, answers }) => {
@@ -96,7 +110,7 @@ const Page = () => {
           // ✅ Update details for existing chat
           return prev.map((chat) =>
             chat.userId === userId
-              ? { ...chat, details: answers}
+              ? { ...chat, details: answers }
               : chat
           )
         } else {
@@ -107,26 +121,56 @@ const Page = () => {
     })
 
 
-     s.on("connect", () => {
-    console.log("Admin connected");
+    s.on("connect", () => {
+      console.log("Admin connected");
       // <-- NOW it fires at correct time
-  });
+    });
 
-  s.on("all-chats-response", (allChats: Chat[]) => {
-    console.log("ALL CHATS RESPONSE:", allChats);
-    setOldChats(allChats);
-    setOldChatsLoading(false)
-  });
+    s.on("all-chats-response", (allChats: Chat[]) => {
+      console.log("ALL CHATS RESPONSE:", allChats);
+      setOldChats(allChats);
+      setOldChatsLoading(false)
+    });
 
 
     // User leaves
     s.on("user-left", (userId: string) => {
-      setChats((prev) => prev.filter((chat) => chat.userId !== userId))
-      setCurrentChat((chat) => chat?.userId !== userId ? chat : null)
-    })
+      setChats(prevChats => {
+        const leftChat = prevChats.find(c => c.userId === userId);
+
+        if (leftChat?.messages?.length && leftChat?.details) {
+          setOldChats(prevOld => {
+            if (!prevOld.some(c => c.userId === leftChat.userId)) {
+              return [...prevOld, leftChat];
+            }
+            return prevOld;
+          });
+        }
+
+        return prevChats.filter(c => c.userId !== userId);
+      });
+
+      setCurrentChat(chat =>
+        chat?.userId !== userId ? chat : null
+      );
+    });
+
+
 
     // Incoming messages
     s.on("message", ({ from, message, answers }) => {
+
+      const isCurrentChatOpen = currentChatRef.current?.userId === from;
+
+
+      console.log(isCurrentChatOpen)
+      // 🔊 Play notification sound if message not from current chat
+      if (!isCurrentChatOpen) {
+
+        notificationSound.current?.play().catch(() => { });
+      }
+      console.log("playing")
+
       console.log("message called", message)
       setChats((prev) => {
         const existingChat = prev.find((chat) => chat.userId === from)
@@ -154,13 +198,13 @@ const Page = () => {
     }
   }, [])
 
-    //   useEffect(() => {
-    //   setOldChats(
-    //     oldChats.filter(
-    //       (old) => !chats.some((live) => live.userId === old.userId)
-    //     )
-    //   );
-    // }, [chats]);
+  //   useEffect(() => {
+  //   setOldChats(
+  //     oldChats.filter(
+  //       (old) => !chats.some((live) => live.userId === old.userId)
+  //     )
+  //   );
+  // }, [chats]);
 
   const handleSend = (userId: string, text: string) => {
     if (!socket || !text.trim()) return
@@ -295,15 +339,15 @@ const Page = () => {
       <div className="col-span-3 flex flex-col h-screen p-4">
         {!currentChat && <div className="flex flex-col justify-center items-center h-full">
           <DotLottieReact
-                  src="https://lottie.host/c7edd507-1c1a-45b4-b7de-4cbb0296752c/ckkjkvv8pf.lottie"
-                  loop
-                  autoplay
-                  className="w-48 h-24"
-                />
-        <p className="text-slate-500 text-md text-center">Select a user from the list to continue.</p>
+            src="https://lottie.host/c7edd507-1c1a-45b4-b7de-4cbb0296752c/ckkjkvv8pf.lottie"
+            loop
+            autoplay
+            className="w-48 h-24"
+          />
+          <p className="text-slate-500 text-md text-center">Select a user from the list to continue.</p>
         </div>
         }
-          
+
         {currentChat && <div className="flex justify-between items-center  bg-blue-300 p-4 rounded-t-lg">
           <h2 className="font-bold text-black">Name : {currentChat?.details?.name}</h2>
 
@@ -432,7 +476,7 @@ const Page = () => {
               <div
                 key={chat.userId}
                 role="button"
-                onClick={() => setupCurrentChat(chat,true)}
+                onClick={() => setupCurrentChat(chat, true)}
                 className="text-slate-800 cursor-pointer flex justify-between w-full items-center rounded-md p-3 transition-all hover:bg-slate-100"
               >
                 <div className="flex gap-3 items-center">

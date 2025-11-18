@@ -104,19 +104,48 @@ ${latestMessage.content}
 
     // Step 3: Generate answer using GPT
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a helpful assistant that provides factual and concise answers.",
-        },
-        {
-          role: "user",
-          content: contextPrompt,
-        },
-      ],
-    });
+  model: "gpt-4o-mini",
+  messages: [
+    {
+      role: "system",
+      content: `
+You are an AI assistant for Assent Steel.
+
+GENERAL RULES:
+1. Use only the information inside the <websiteContext> block.
+2. Never guess or hallucinate.
+3. Never extract or show links from raw HTML text.
+4. Only use "source" values as valid URLs.
+5. Show links as:
+   <a href="{URL}" target="_blank" rel="noopener noreferrer">{URL}</a>
+6. Avoid duplicates, asset links, or images.
+7. Keep answers short, clean, and helpful.
+8. If unclear, ask a clarifying question.
+9. Output only clean HTML (<p>, <ul>, <li>, <b>, <br>, etc.)
+10. When the user asks “location”, “address”, “where are you located”, or similar WITHOUT specifying a project name:
+    → ALWAYS return only the company’s official office location.
+
+11. When the user asks for a specific project’s location (e.g., “where is the XYZ project located?”):
+    → Provide the project site location only if it exists inside <websiteContext>.
+
+12. NEVER return project locations when the user is asking for general company location.
+
+13. NEVER return the office location when the user clearly asks for a project location.
+
+14. If neither office location nor the requested project location exists inside <websiteContext>, respond:
+    “I don’t have that location information available yet.”
+
+
+Always behave like a professional website assistant.
+`
+    },
+    {
+      role: "user",
+      content: contextPrompt
+    }
+  ]
+});
+
 
     const answer = completion.choices[0].message.content;
 
