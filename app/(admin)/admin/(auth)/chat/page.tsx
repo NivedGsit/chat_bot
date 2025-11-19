@@ -78,7 +78,7 @@ const Page = () => {
       console.log(allChats)
       setChats(allChats.map((chat: Chat) => ({
         ...chat,
-        unreadCount: chat.messages.length == 0 ? 1 : chat.unreadCount || 0
+        unreadCount: chat.unreadCount ?? 0
       })));
       setLoading(false)
 
