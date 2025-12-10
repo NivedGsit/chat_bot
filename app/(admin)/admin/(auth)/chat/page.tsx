@@ -55,7 +55,7 @@ const Page = () => {
   useEffect(() => {
     const total = chats.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
     setTotalUnread(total);
-    console.log("total",total)
+    console.log("total", total)
   }, [chats]);
 
   useEffect(() => {
@@ -222,7 +222,20 @@ const Page = () => {
   const handleLeave = (userId: string) => {
     if (!socket) return
     socket.emit("kick-user", userId)
-    setChats((prev) => prev.filter((chat) => chat.userId !== userId))
+    setChats(prevChats => {
+      const leftChat = prevChats.find(c => c.userId === userId);
+
+      if (leftChat?.messages?.length && leftChat?.details) {
+        setOldChats(prevOld => {
+          if (!prevOld.some(c => c.userId === leftChat.userId)) {
+            return [...prevOld, leftChat];
+          }
+          return prevOld;
+        });
+      }
+
+      return prevChats.filter(c => c.userId !== userId);
+    });
   }
 
   const handleDeleteHistory = (userId: string) => {
