@@ -110,10 +110,17 @@ export function connectToDatabase(): Db {
 
     // ✅ Prepare documents for batch insert
     const docs: Doc[] = embeddings.map((vector, idx) => ({
-      $vector: vector,
-      text: chunks[idx],
-      source: url,
-    }));
+  $vector: vector,
+  text: chunks[idx],
+  source: url,
+  category: url.includes("engineering") || 
+            url.includes("fabrication") || 
+            url.includes("blasting") || 
+            url.includes("services")
+            ? "service"
+            : "general",
+}));
+
 
     if (docs.length) {
       const res = await collection.insertMany(docs);
