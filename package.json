@@ -28,7 +28,7 @@
     "langchain": "^0.3.29",
     "lucide-react": "^0.544.0",
     "mongoose": "^8.18.2",
-    "next": "15.3.5",
+    "next": "^15.5.7",
     "p-limit": "^7.1.1",
     "puppeteer": "^24.12.1",
     "react": "^19.0.0",

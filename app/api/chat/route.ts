@@ -44,15 +44,22 @@ export async function POST(request: NextRequest) {
       process.env.NEXT_PUBLIC_ASTRA_DB_COLLECTION || ""
     );
 
-    const cursor = collection.find(
-      {},
-      {
-        sort: {
-          $vector: embedding,
-        },
-        limit: 10,
-      }
-    );
+let filter = {};
+
+if (/service|engineering|fabrication|blasting|erection/i.test(latestMessage.content)) {
+  filter = { category: "service" };
+}
+
+const cursor = collection.find(
+  filter,
+  {
+    sort: {
+      $vector: embedding,
+    },
+    limit: 10,
+  }
+);
+
 
     const documents = await cursor.toArray();
     console.log("Fetched documents from DB");
@@ -111,29 +118,29 @@ ${latestMessage.content}
       content: `
 You are an AI assistant for Assent Steel.
 
+SPECIAL RULES FOR SERVICES:
+- If the user asks about “services”, “what do you offer”, “what are your services”, “solutions”, or anything similar:
+  ALWAYS answer strictly with the official list of services:
+
+  • Engineering
+  • Fabrication
+  • Blasting & Painting
+  • Steel Erection
+
+- Ignore retrieval results for these questions.
+- Output only clean HTML (<p>, <ul>, <li>, <b>, etc.)
+
 GENERAL RULES:
-1. Use only the information inside the <websiteContext> block.
+1. Use only the information inside the <websiteContext> block unless a SPECIAL RULE applies.
 2. Never guess or hallucinate.
 3. Never extract or show links from raw HTML text.
 4. Only use "source" values as valid URLs.
-5. Show links as:
+5. Show links in the format:
    <a href="{URL}" target="_blank" rel="noopener noreferrer">{URL}</a>
-6. Avoid duplicates, asset links, or images.
-7. Keep answers short, clean, and helpful.
+6. Avoid duplicates.
+7. When the user asks about “location” or “address” without a project name:
+   ALWAYS return the company’s head office address.
 8. If unclear, ask a clarifying question.
-9. Output only clean HTML (<p>, <ul>, <li>, <b>, <br>, etc.)
-10. When the user asks “location”, “address”, “where are you located”, or similar WITHOUT specifying a project name:
-    → ALWAYS return only the company’s head office address.
-
-11. When the user asks for a specific project’s location (e.g., “where is the XYZ project located?”):
-    → Provide the project site location only if it exists inside <websiteContext>.
-
-12. NEVER return project locations when the user is asking for general company location.
-
-13. NEVER return the office location when the user clearly asks for a project location.
-
-14. If neither office location nor the requested project location exists inside <websiteContext>, respond:
-    “I don’t have that location information available yet.”
 
 
 Always behave like a professional website assistant.
