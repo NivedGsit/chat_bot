@@ -14,6 +14,7 @@ export default function Chatbot() {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+
   const [humanMessage, setHumanMessage] = useState("")
   const [humanMessages, setHumanMessages] = useState<{ from: string; text: string }[]>([])
   const [isHumanMode, setIsHumanMode] = useState(false)
@@ -142,42 +143,42 @@ export default function Chatbot() {
     e.preventDefault();
     if (!input.trim()) return;
 
-switch (questionIndex) {
-  case 0: // Name
-    if (input.trim().length < 3) {
-      setInputError("Name must be at least 3 characters.");
-      return;
-    }
-    if (!/^[A-Za-z\s]+$/.test(input.trim())) {
-      setInputError("Name should contain only letters.");
-      return;
-    }
-    break;
+    switch (questionIndex) {
+      case 0: // Name
+        if (input.trim().length < 3) {
+          setInputError("Name must be at least 3 characters.");
+          return;
+        }
+        if (!/^[A-Za-z\s]+$/.test(input.trim())) {
+          setInputError("Name should contain only letters.");
+          return;
+        }
+        break;
 
-  case 1: // Organization
-    if (input.trim().length < 2) {
-      setInputError("Organization name must be at least 2 characters.");
-      return;
-    }
-    break;
+      case 1: // Organization
+        if (input.trim().length < 2) {
+          setInputError("Organization name must be at least 2 characters.");
+          return;
+        }
+        break;
 
-  case 2: // Location
-    if (input.trim().length < 2) {
-      setInputError("Location must be at least 2 characters.");
-      return;
-    }
-    break;
+      case 2: // Location
+        if (input.trim().length < 2) {
+          setInputError("Location must be at least 2 characters.");
+          return;
+        }
+        break;
 
-  case 3: // Email
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.trim())) {
-      setInputError("Please enter a valid email address.");
-      return;
-    }
-    break;
+      case 3: // Email
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.trim())) {
+          setInputError("Please enter a valid email address.");
+          return;
+        }
+        break;
 
-  default:
-    break;
-}
+      default:
+        break;
+    }
 
 
     const updatedAnswers = [...answers];
